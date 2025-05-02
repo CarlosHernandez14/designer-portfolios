@@ -97,7 +97,7 @@ public class ProjectWindow extends javax.swing.JFrame {
         flowLayout1.setAlignOnBaseline(true);
         containerRestImages.setLayout(flowLayout1);
 
-        panelImage2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/DefaultImage.jpg"))); // NOI18N
+        panelImage2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/DefaultImage2.jpg"))); // NOI18N
         panelImage2.setPreferredSize(new java.awt.Dimension(155, 135));
 
         javax.swing.GroupLayout panelImage2Layout = new javax.swing.GroupLayout(panelImage2);
@@ -145,7 +145,7 @@ public class ProjectWindow extends javax.swing.JFrame {
 
         containerRestImages.add(panelImage4);
 
-        panelImage5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/DefaultImage.jpg"))); // NOI18N
+        panelImage5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/DefaultImage2.jpg"))); // NOI18N
         panelImage5.setPreferredSize(new java.awt.Dimension(155, 135));
 
         javax.swing.GroupLayout panelImage5Layout = new javax.swing.GroupLayout(panelImage5);
