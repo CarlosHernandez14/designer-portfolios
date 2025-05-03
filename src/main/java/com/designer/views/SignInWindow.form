@@ -67,14 +67,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButton1" pref="331" max="32767" attributes="0"/>
+                          <Component id="btnLogin" pref="331" max="32767" attributes="0"/>
                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jLabel1" pref="331" max="32767" attributes="0"/>
-                              <Component id="jTextField1" max="32767" attributes="0"/>
-                              <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField3" alignment="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jLabel1" pref="331" max="32767" attributes="0"/>
+                          <Component id="fieldEmail" max="32767" attributes="0"/>
+                          <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="fieldPass" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -88,13 +86,13 @@
                       <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jTextField1" min="-2" pref="39" max="-2" attributes="0"/>
+                      <Component id="fieldEmail" min="-2" pref="39" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jTextField3" min="-2" pref="39" max="-2" attributes="0"/>
+                      <Component id="fieldPass" min="-2" pref="39" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" pref="36" max="-2" attributes="0"/>
+                      <Component id="btnLogin" min="-2" pref="36" max="-2" attributes="0"/>
                       <EmptySpace pref="40" max="32767" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -161,7 +159,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JTextField" name="jTextField1">
+            <Component class="javax.swing.JTextField" name="fieldEmail">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -169,7 +167,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="12" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="ejemplo@gmail.com"/>
+                <Property name="text" type="java.lang.String" value="ej: ejemplo@gmail.com"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new RoundedTextField(10)"/>
@@ -189,7 +187,7 @@
                 <Property name="text" type="java.lang.String" value="Correo electronico"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextField3">
+            <Component class="javax.swing.JTextField" name="fieldPass">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -197,7 +195,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="12" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="ejemplo@gmail.com"/>
+                <Property name="text" type="java.lang.String" value="ej: 2536@l.algo"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new RoundedTextField(10)"/>
@@ -217,7 +215,7 @@
                 <Property name="text" type="java.lang.String" value="Contrase&#xf1;a"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton1">
+            <Component class="javax.swing.JButton" name="btnLogin">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="cc" green="99" red="0" type="rgb"/>
@@ -231,6 +229,9 @@
                 <Property name="text" type="java.lang.String" value="Entrar"/>
                 <Property name="borderPainted" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLoginActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

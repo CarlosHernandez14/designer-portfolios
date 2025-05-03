@@ -4,7 +4,10 @@
  */
 package com.designer.views;
 
-import com.designer.utils.WrapLayout;
+import com.designers.dao.Dao;
+import com.designers.domain.Profile;
+import com.designers.domain.User;
+import com.designers.utils.WrapLayout;
 import com.formdev.flatlaf.ui.FlatButtonBorder;
 import java.awt.FlowLayout;
 
@@ -14,26 +17,77 @@ import java.awt.FlowLayout;
  */
 public class HomeWindow extends javax.swing.JFrame {
 
+    
+    private User loggedUser;
+    private Profile profile;
+    private Dao dao;
+    
     /**
      * Creates new form HomeWindow
      */
     public HomeWindow() {
         initComponents();
+        this.dao = new Dao();
+        this.setLocationRelativeTo(null);
+        WrapLayout wrapLayout = new WrapLayout();
+        wrapLayout.setHgap(50);
+        wrapLayout.setVgap(20);
+        
+        // Set the layouts for the scroll tabs
+        this.containerCards.setLayout(wrapLayout);
+        this.containeDesigners.setLayout(wrapLayout);
+        
+        
+        this.panelCareers.setLayout(new FlowLayout());
+        
+        
+        initData();
+    }
+    
+    public HomeWindow(User loggedUser) {
+        initComponents();
+        this.dao = new Dao();
+        
         
         this.setLocationRelativeTo(null);
         WrapLayout wrapLayout = new WrapLayout();
         wrapLayout.setHgap(50);
         wrapLayout.setVgap(20);
+        
+        // Set the layouts for the scroll tabs
         this.containerCards.setLayout(wrapLayout);
+        this.containeDesigners.setLayout(wrapLayout);
         
         
         this.panelCareers.setLayout(new FlowLayout());
         
+        this.loggedUser = loggedUser;
+        
+        // Init user data
+        initUserData();
+        
         initData();
     }
     
-    private void initData() {
+    private void initUserData() {
+        // Get the profile from the logged user
+        this.profile = this.dao.getProfileByUserId(this.loggedUser.getIdUser());
         
+        if (profile != null) {
+            this.buttonLogin.setText(this.profile.getName());
+        } else 
+            this.buttonLogin.setText(this.loggedUser.getEmail());
+    }
+    
+    private void initData() {
+
+        initCareers();
+        initProjects();
+        initDesigners();
+        
+    }
+    
+    private void initProjects() {
         this.containerCards.removeAll();
         
         for (int i = 0; i < 9; i++) {
@@ -41,6 +95,11 @@ public class HomeWindow extends javax.swing.JFrame {
             this.containerCards.add(card);
         }
         
+        this.containerCards.revalidate();
+        this.containerCards.repaint();
+    }
+    
+    private void initCareers() {
         // Initalize available careers
         this.panelCareers.removeAll();
         for (int i = 0; i < 5; i++) {
@@ -50,11 +109,23 @@ public class HomeWindow extends javax.swing.JFrame {
         
         this.panelCareers.revalidate();
         this.panelCareers.repaint();
+    }
+    
+    private void initDesigners() {
         
-        this.containerCards.revalidate();
-        this.containerCards.repaint();
+        // Initialize designers
+        this.containeDesigners.removeAll();
+        
+        for (int i = 0; i < 5; i++) {
+            PanelDesigner designer = new PanelDesigner();
+            this.containeDesigners.add(designer);
+        }
+        
+        this.containeDesigners.revalidate();
+        this.containeDesigners.repaint();
         
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -71,15 +142,19 @@ public class HomeWindow extends javax.swing.JFrame {
         buttonProjects = new javax.swing.JButton();
         buttonDesigners = new javax.swing.JButton();
         buttonLogin = new javax.swing.JButton();
+        scrollCareers = new javax.swing.JScrollPane();
+        panelCareers = new javax.swing.JPanel();
+        tabbedPainBody = new javax.swing.JTabbedPane();
         scrollCards = new javax.swing.JScrollPane();
         containerCards = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        panelCareers = new javax.swing.JPanel();
+        scrollDesigners = new javax.swing.JScrollPane();
+        containeDesigners = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         panelFram.setBackground(new java.awt.Color(247, 247, 247));
+        panelFram.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         panelNavbar.setBackground(new java.awt.Color(255, 255, 255));
         panelNavbar.setBorder(new org.edisoncor.gui.util.DropShadowBorder());
@@ -104,6 +179,11 @@ public class HomeWindow extends javax.swing.JFrame {
         buttonProjects.setBorder(new FlatButtonBorder());
         buttonProjects.setBorderPainted(false);
         buttonProjects.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonProjects.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                buttonProjectsMouseClicked(evt);
+            }
+        });
 
         buttonDesigners.setBackground(new java.awt.Color(255, 255, 255));
         buttonDesigners.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
@@ -112,6 +192,11 @@ public class HomeWindow extends javax.swing.JFrame {
         buttonDesigners.setBorder(new FlatButtonBorder());
         buttonDesigners.setBorderPainted(false);
         buttonDesigners.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonDesigners.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                buttonDesignersMouseClicked(evt);
+            }
+        });
 
         buttonLogin.setBackground(new java.awt.Color(255, 255, 255));
         buttonLogin.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
@@ -153,6 +238,28 @@ public class HomeWindow extends javax.swing.JFrame {
                     .addComponent(buttonLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23))
         );
+
+        panelFram.add(panelNavbar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 899, -1));
+
+        scrollCareers.setBorder(null);
+        scrollCareers.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        panelCareers.setBackground(new java.awt.Color(247, 247, 247));
+
+        javax.swing.GroupLayout panelCareersLayout = new javax.swing.GroupLayout(panelCareers);
+        panelCareers.setLayout(panelCareersLayout);
+        panelCareersLayout.setHorizontalGroup(
+            panelCareersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 899, Short.MAX_VALUE)
+        );
+        panelCareersLayout.setVerticalGroup(
+            panelCareersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 79, Short.MAX_VALUE)
+        );
+
+        scrollCareers.setViewportView(panelCareers);
+
+        panelFram.add(scrollCareers, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 94, -1, -1));
 
         scrollCards.setBackground(new java.awt.Color(255, 255, 255));
         scrollCards.setBorder(null);
@@ -197,41 +304,31 @@ public class HomeWindow extends javax.swing.JFrame {
 
         scrollCards.setViewportView(containerCards);
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        tabbedPainBody.addTab("ProjectsTab", scrollCards);
 
-        panelCareers.setBackground(new java.awt.Color(247, 247, 247));
+        scrollDesigners.setBackground(new java.awt.Color(255, 255, 255));
+        scrollDesigners.setBorder(null);
+        scrollDesigners.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollDesigners.setToolTipText("");
 
-        javax.swing.GroupLayout panelCareersLayout = new javax.swing.GroupLayout(panelCareers);
-        panelCareers.setLayout(panelCareersLayout);
-        panelCareersLayout.setHorizontalGroup(
-            panelCareersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 899, Short.MAX_VALUE)
+        containeDesigners.setBackground(new java.awt.Color(247, 247, 247));
+
+        javax.swing.GroupLayout containeDesignersLayout = new javax.swing.GroupLayout(containeDesigners);
+        containeDesigners.setLayout(containeDesignersLayout);
+        containeDesignersLayout.setHorizontalGroup(
+            containeDesignersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 897, Short.MAX_VALUE)
         );
-        panelCareersLayout.setVerticalGroup(
-            panelCareersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 79, Short.MAX_VALUE)
+        containeDesignersLayout.setVerticalGroup(
+            containeDesignersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 475, Short.MAX_VALUE)
         );
 
-        jScrollPane1.setViewportView(panelCareers);
+        scrollDesigners.setViewportView(containeDesigners);
 
-        javax.swing.GroupLayout panelFramLayout = new javax.swing.GroupLayout(panelFram);
-        panelFram.setLayout(panelFramLayout);
-        panelFramLayout.setHorizontalGroup(
-            panelFramLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelNavbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(scrollCards, javax.swing.GroupLayout.PREFERRED_SIZE, 899, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jScrollPane1)
-        );
-        panelFramLayout.setVerticalGroup(
-            panelFramLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelFramLayout.createSequentialGroup()
-                .addComponent(panelNavbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollCards, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
-        );
+        tabbedPainBody.addTab("DesignersTab", scrollDesigners);
+
+        panelFram.add(tabbedPainBody, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, -1, 510));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -249,8 +346,18 @@ public class HomeWindow extends javax.swing.JFrame {
 
     private void buttonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoginActionPerformed
         // TODO add your handling code here:
-        new SignInWindow().setVisible(true);
+        new SignInWindow(this).setVisible(true);
     }//GEN-LAST:event_buttonLoginActionPerformed
+
+    private void buttonProjectsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonProjectsMouseClicked
+        // TODO add your handling code here:
+        this.tabbedPainBody.setSelectedIndex(0);
+    }//GEN-LAST:event_buttonProjectsMouseClicked
+
+    private void buttonDesignersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDesignersMouseClicked
+        // TODO add your handling code here:
+        this.tabbedPainBody.setSelectedIndex(1);
+    }//GEN-LAST:event_buttonDesignersMouseClicked
 
     /**
      * @param args the command line arguments
@@ -291,13 +398,16 @@ public class HomeWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonDesigners;
     private javax.swing.JButton buttonLogin;
     private javax.swing.JButton buttonProjects;
+    private javax.swing.JPanel containeDesigners;
     private javax.swing.JPanel containerCards;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panelCareers;
     private javax.swing.JPanel panelFram;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPanel panelNavbar;
     private javax.swing.JScrollPane scrollCards;
+    private javax.swing.JScrollPane scrollCareers;
+    private javax.swing.JScrollPane scrollDesigners;
+    private javax.swing.JTabbedPane tabbedPainBody;
     // End of variables declaration//GEN-END:variables
 }

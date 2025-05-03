@@ -4,18 +4,30 @@
  */
 package com.designer.views;
 
-/**
- *
- * @author carlo
- */
+import com.designers.dao.Dao;
+import com.designers.domain.User;
+import javax.swing.JOptionPane;
+
 public class RegisterWindow extends javax.swing.JFrame {
 
+    private Dao dao;
+    
+    private HomeWindow homeWindow;
     /**
      * Creates new form SignInWindow
      */
     public RegisterWindow() {
         initComponents();
         this.setLocationRelativeTo(null);
+        
+        this.dao = new Dao();
+    }
+    
+    public RegisterWindow(HomeWindow homeWindow) {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.homeWindow = homeWindow;
+        this.dao = new Dao();
     }
 
     /**
@@ -33,12 +45,12 @@ public class RegisterWindow extends javax.swing.JFrame {
         jPanel2 = new RoundedPanel(20);
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new RoundedTextField(10);
+        fieldEmail = new RoundedTextField(10);
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new RoundedTextField(10);
+        fieldPass = new RoundedTextField(10);
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jTextField2 = new RoundedTextField(10);
+        buttonCreateAcc = new javax.swing.JButton();
+        fieldName = new RoundedTextField(10);
         jLabel6 = new javax.swing.JLabel();
         panelTranslucidoComplete22 = new org.edisoncor.gui.panel.PanelTranslucidoComplete2();
 
@@ -74,38 +86,43 @@ public class RegisterWindow extends javax.swing.JFrame {
         });
         jPanel2.add(jLabel3);
 
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jTextField1.setText("ej: ejemplo@gmail.com");
+        fieldEmail.setBackground(new java.awt.Color(255, 255, 255));
+        fieldEmail.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        fieldEmail.setText("ej: ejemplo@gmail.com");
 
         jLabel4.setBackground(new java.awt.Color(51, 51, 51));
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(102, 102, 102));
         jLabel4.setText("Correo electronico");
 
-        jTextField3.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jTextField3.setText("ej: dkj@kd.cCS12");
+        fieldPass.setBackground(new java.awt.Color(255, 255, 255));
+        fieldPass.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        fieldPass.setText("ej: dkj@kd.cCS12");
 
         jLabel5.setBackground(new java.awt.Color(51, 51, 51));
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(102, 102, 102));
         jLabel5.setText("Contraseña");
 
-        jButton1.setBackground(new java.awt.Color(0, 153, 204));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Crear cuenta");
-        jButton1.setBorderPainted(false);
+        buttonCreateAcc.setBackground(new java.awt.Color(0, 153, 204));
+        buttonCreateAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        buttonCreateAcc.setForeground(new java.awt.Color(255, 255, 255));
+        buttonCreateAcc.setText("Crear cuenta");
+        buttonCreateAcc.setBorderPainted(false);
+        buttonCreateAcc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCreateAccActionPerformed(evt);
+            }
+        });
 
-        jTextField2.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jTextField2.setText("ej: Juan Perez");
+        fieldName.setBackground(new java.awt.Color(255, 255, 255));
+        fieldName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        fieldName.setText("ej: Juan Perez");
 
         jLabel6.setBackground(new java.awt.Color(51, 51, 51));
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel6.setText("Nombre Comleto");
+        jLabel6.setText("Nombre Completo");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -116,13 +133,13 @@ public class RegisterWindow extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                    .addComponent(buttonCreateAcc, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                    .addComponent(jTextField1)
+                    .addComponent(fieldEmail)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField3)
-                    .addComponent(jTextField2))
+                    .addComponent(fieldPass)
+                    .addComponent(fieldName))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -133,17 +150,17 @@ public class RegisterWindow extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(fieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(fieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(fieldPass, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(buttonCreateAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -183,6 +200,29 @@ public class RegisterWindow extends javax.swing.JFrame {
         new SignInWindow().setVisible(true);
     }//GEN-LAST:event_jLabel3MouseClicked
 
+    private void buttonCreateAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCreateAccActionPerformed
+        // TODO add your handling code here:
+        
+        // Get fields data
+        String name = this.fieldName.getText();
+        String email = this.fieldEmail.getText();
+        String pass = this.fieldPass.getText();
+        
+        User newUser = new User(email, pass);
+        
+        if (this.dao.registerUser(newUser)) {
+            JOptionPane.showMessageDialog(null, "Usuario registrado exitosamente");
+            
+            this.dispose();
+            new SignInWindow(homeWindow).setVisible(true);
+            
+            return;
+        }
+        
+        JOptionPane.showMessageDialog(null, "Ha ocurrido un error al registrarte, intentalo de nuevo mas tarde");
+        
+    }//GEN-LAST:event_buttonCreateAccActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -220,7 +260,10 @@ public class RegisterWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton buttonCreateAcc;
+    private javax.swing.JTextField fieldEmail;
+    private javax.swing.JTextField fieldName;
+    private javax.swing.JTextField fieldPass;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -229,9 +272,6 @@ public class RegisterWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private org.edisoncor.gui.panel.PanelTranslucidoComplete2 panelTranslucidoComplete22;
     // End of variables declaration//GEN-END:variables
