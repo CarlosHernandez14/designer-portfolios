@@ -16,11 +16,12 @@ public class Profile {
     private String phone;
     private int userId;
     private int careerId;
+    private String summary;
 
     public Profile() {
     }
     
-    public Profile(int idProfile, String name, String lastname, String phone, int userId, int careerId) {
+    public Profile(int idProfile, String name, String lastname, String phone, int userId, int careerId, String summary) {
         this.idProfile = idProfile;
         this.name = name;
         this.lastname = lastname;
@@ -28,6 +29,16 @@ public class Profile {
         this.userId = userId;
         this.careerId = careerId;
     }
+
+    public Profile(String name, String lastname, String phone, int userId, int careerId, String summary) {
+        this.name = name;
+        this.lastname = lastname;
+        this.phone = phone;
+        this.userId = userId;
+        this.careerId = careerId;
+        this.summary = summary;
+    }
+    
 
     public int getIdProfile() {
         return idProfile;
@@ -77,10 +88,17 @@ public class Profile {
         this.careerId = careerId;
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+    
     @Override
     public String toString() {
         return "Profile{" + "idProfile=" + idProfile + ", name=" + name + ", lastname=" + lastname + ", phone=" + phone + ", userId=" + userId + ", careerId=" + careerId + '}';
     }
-    
     
 }

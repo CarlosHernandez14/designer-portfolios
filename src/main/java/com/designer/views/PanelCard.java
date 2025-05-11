@@ -4,20 +4,47 @@
  */
 package com.designer.views;
 
+import com.designers.dao.ProjectsDao;
+import com.designers.domain.Image;
+import com.designers.domain.Project;
 import com.designers.views.designer.ProjectWindow;
+import javax.swing.ImageIcon;
 
-/**
- *
- * @author carlo
- */
 public class PanelCard extends RoundedPanel {
 
+    private Project project;
+    
     /**
      * Creates new form PanelCard
      */
     public PanelCard() {
         super(20);
         initComponents();
+    }
+    
+    public PanelCard(Project project) {
+        super(20);
+        initComponents();
+        
+        this.project = project;
+        
+        initData();
+    }
+    
+    private void initData() {
+        
+        this.labelTittle.setText(this.project.getName());
+        this.textDescription.setText(this.project.getDescription());
+        
+        loadImage();
+    }
+    
+    private void loadImage() {
+        Image image = ProjectsDao.getImagesByProjectId(this.project.getIdProject()).getFirst();
+        
+        this.panelImage1.setIcon(new ImageIcon(image.getFile()));
+        this.panelImage1.revalidate();
+        this.panelImage1.repaint();
     }
 
     /**
@@ -32,8 +59,8 @@ public class PanelCard extends RoundedPanel {
         panelImage1 = new PanelImageRedondeado();
         labelTittle = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        labelTittle2 = new javax.swing.JLabel();
+        textDescription = new javax.swing.JTextArea();
+        labelAuthor = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -64,16 +91,16 @@ public class PanelCard extends RoundedPanel {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        jTextArea1.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea1.setColumns(20);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jTextArea1.setText("Descripcion breve del proyecto realizado importante y como se llevo a cabo");
-        jScrollPane1.setViewportView(jTextArea1);
+        textDescription.setBackground(new java.awt.Color(255, 255, 255));
+        textDescription.setColumns(20);
+        textDescription.setLineWrap(true);
+        textDescription.setRows(5);
+        textDescription.setText("Descripcion breve del proyecto realizado importante y como se llevo a cabo");
+        jScrollPane1.setViewportView(textDescription);
 
-        labelTittle2.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        labelTittle2.setForeground(new java.awt.Color(51, 51, 51));
-        labelTittle2.setText("Autor");
+        labelAuthor.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        labelAuthor.setForeground(new java.awt.Color(51, 51, 51));
+        labelAuthor.setText("Autor");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -86,7 +113,7 @@ public class PanelCard extends RoundedPanel {
                     .addComponent(labelTittle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(labelTittle2, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(14, Short.MAX_VALUE))))
         );
@@ -99,7 +126,7 @@ public class PanelCard extends RoundedPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(labelTittle2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(labelAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -112,9 +139,9 @@ public class PanelCard extends RoundedPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JLabel labelAuthor;
     private javax.swing.JLabel labelTittle;
-    private javax.swing.JLabel labelTittle2;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
+    private javax.swing.JTextArea textDescription;
     // End of variables declaration//GEN-END:variables
 }

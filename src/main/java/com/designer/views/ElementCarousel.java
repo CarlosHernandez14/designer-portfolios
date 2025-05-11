@@ -4,18 +4,40 @@
  */
 package com.designer.views;
 
+import com.designers.domain.Image;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author carlo
  */
 public class ElementCarousel extends RoundedPanel {
 
+    private Image image;
+    
     /**
      * Creates new form ElementCarousel
      */
     public ElementCarousel() {
         super(20);
         initComponents();
+    }
+    
+    public ElementCarousel(Image image) {
+        super(20);
+        initComponents();
+        
+        this.image = image;
+        
+        initData();
+    }
+    
+    private void initData() {
+        
+        this.panelImage1.setIcon(new ImageIcon(this.image.getFile()));
+        this.panelImage1.revalidate();
+        this.panelImage1.repaint();
+        
     }
 
     /**

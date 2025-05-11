@@ -6,13 +6,12 @@ package com.designers.views.designer;
 
 import com.designer.views.PanelImageRedondeado;
 import com.designer.views.RoundedPanel;
+import com.designers.domain.Project;
 
-/**
- *
- * @author carlo
- */
 public class ProjectWindow extends javax.swing.JFrame {
 
+    private Project project;
+    
     /**
      * Creates new form ProjectWindow
      */
@@ -20,6 +19,21 @@ public class ProjectWindow extends javax.swing.JFrame {
         initComponents();
         
         this.setLocationRelativeTo(null);
+    }
+    
+    public ProjectWindow(Project project) {
+        initComponents();
+        this.setLocationRelativeTo(null);
+    
+        this.project = project;
+    
+        initData();
+    }
+    
+    private void initData() {
+        
+        
+        
     }
 
     /**

@@ -4,21 +4,25 @@
  */
 package com.designer.views;
 
+import com.designers.dao.Dao;
+import com.designers.dao.ProjectsDao;
+import com.designers.domain.Image;
 import com.designers.domain.Profile;
+import com.designers.domain.Project;
 import java.awt.Point;
+import java.util.List;
 import javax.swing.JScrollBar;
 import javax.swing.JViewport;
 import javax.swing.Timer;
 
-/**
- *
- * @author carlo
- */
 public class PanelDesigner extends RoundedPanel {
     
     private Timer carouselTimer;   // Timer de Swing
     private int targetX;           // Posición final deseada
 
+    private List<Project> profileProjects;
+    private Profile profile;
+    
     /**
      * Creates new form PanelDesigner
      */
@@ -36,20 +40,39 @@ public class PanelDesigner extends RoundedPanel {
     public PanelDesigner(Profile profile) {
         super(20);
         initComponents();
+        
+        this.panelFade.setVisible(false);
+        this.buttonNext.setVisible(false);
+        this.buttonPrev.setVisible(false);
+        
+        this.profile = profile;
+        
+        this.profileProjects = ProjectsDao.getProjectsByProfileId(this.profile.getIdProfile()); 
+        
+        initData();
     }
     
     public void initData() {
+        
         initCarousel();
         
         // Initialize the rest of the data
+        this.labelTittle.setText(this.profile.getName() + " " + this.profile.getLastname());
+        
+        
+        this.textDescription.setText(this.profile.getSummary());
+        
     }
     
     public void initCarousel() {
         
         this.panelCarousel.removeAll();
         
-        for (int i = 0; i < 5; i++) {
-            ElementCarousel elCarousel = new ElementCarousel();
+        // Load images
+        List<Image> images = ProjectsDao.getFirstImageByProfileId(this.profile.getIdProfile());
+        
+        for (Image image : images) {
+            ElementCarousel elCarousel = new ElementCarousel(image);
             this.panelCarousel.add(elCarousel);
         }
         
@@ -67,10 +90,10 @@ public class PanelDesigner extends RoundedPanel {
     private void initComponents() {
 
         containerPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        buttonViewProfile = new javax.swing.JButton();
         labelTittle = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        textDescription = new javax.swing.JTextArea();
         containerCarousel = new RoundedPanel(20);
         buttonNext = new javax.swing.JButton();
         buttonPrev = new javax.swing.JButton();
@@ -89,14 +112,14 @@ public class PanelDesigner extends RoundedPanel {
             }
         });
 
-        jButton1.setBackground(new java.awt.Color(0, 153, 204));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Visualizar perfil");
-        jButton1.setBorderPainted(false);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        buttonViewProfile.setBackground(new java.awt.Color(0, 153, 204));
+        buttonViewProfile.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        buttonViewProfile.setForeground(new java.awt.Color(255, 255, 255));
+        buttonViewProfile.setText("Visualizar perfil");
+        buttonViewProfile.setBorderPainted(false);
+        buttonViewProfile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                buttonViewProfileActionPerformed(evt);
             }
         });
 
@@ -108,12 +131,12 @@ public class PanelDesigner extends RoundedPanel {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        jTextArea1.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea1.setColumns(20);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jTextArea1.setText("Descripcion breve del proyecto realizado importante y como se llevo a cabo");
-        jScrollPane1.setViewportView(jTextArea1);
+        textDescription.setBackground(new java.awt.Color(255, 255, 255));
+        textDescription.setColumns(20);
+        textDescription.setLineWrap(true);
+        textDescription.setRows(5);
+        textDescription.setText("Descripcion breve del proyecto realizado importante y como se llevo a cabo");
+        jScrollPane1.setViewportView(textDescription);
 
         containerCarousel.setBackground(new java.awt.Color(255, 255, 255));
         containerCarousel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -214,7 +237,7 @@ public class PanelDesigner extends RoundedPanel {
             .addGroup(containerPanelLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(containerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonViewProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(containerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(labelTittle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)))
@@ -230,7 +253,7 @@ public class PanelDesigner extends RoundedPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
+                .addComponent(buttonViewProfile)
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
@@ -251,10 +274,10 @@ public class PanelDesigner extends RoundedPanel {
         
     }//GEN-LAST:event_containerPanelformMouseClicked
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void buttonViewProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonViewProfileActionPerformed
         // TODO add your handling code here:
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_buttonViewProfileActionPerformed
 
     private void scrollCarouselMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollCarouselMouseEntered
         // TODO add your handling code here:
@@ -388,15 +411,15 @@ public class PanelDesigner extends RoundedPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonNext;
     private javax.swing.JButton buttonPrev;
+    private javax.swing.JButton buttonViewProfile;
     private javax.swing.JPanel containerCarousel;
     private javax.swing.JPanel containerPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel labelTittle;
     private javax.swing.JPanel panelCarousel;
     private org.edisoncor.gui.panel.PanelTranslucidoComplete2 panelFade;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JScrollPane scrollCarousel;
+    private javax.swing.JTextArea textDescription;
     // End of variables declaration//GEN-END:variables
 }

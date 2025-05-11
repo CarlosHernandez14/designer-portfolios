@@ -5,11 +5,16 @@
 package com.designer.views;
 
 import com.designers.dao.Dao;
+import com.designers.dao.ProjectsDao;
 import com.designers.domain.Profile;
+import com.designers.domain.Project;
 import com.designers.domain.User;
 import com.designers.utils.WrapLayout;
+import com.designers.views.designer.AddProjectWindow;
 import com.formdev.flatlaf.ui.FlatButtonBorder;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.List;
 
 /**
  *
@@ -36,9 +41,12 @@ public class HomeWindow extends javax.swing.JFrame {
         // Set the layouts for the scroll tabs
         this.containerCards.setLayout(wrapLayout);
         this.containeDesigners.setLayout(wrapLayout);
-        
+        this.containerCardsPortfolio.setLayout(wrapLayout);
         
         this.panelCareers.setLayout(new FlowLayout());
+        
+
+        
         
         
         initData();
@@ -57,7 +65,7 @@ public class HomeWindow extends javax.swing.JFrame {
         // Set the layouts for the scroll tabs
         this.containerCards.setLayout(wrapLayout);
         this.containeDesigners.setLayout(wrapLayout);
-        
+        this.containerCardsPortfolio.setLayout(wrapLayout);
         
         this.panelCareers.setLayout(new FlowLayout());
         
@@ -80,26 +88,31 @@ public class HomeWindow extends javax.swing.JFrame {
     }
     
     private void initData() {
+        if (this.loggedUser == null)
+            this.buttonMyPortfolio.setVisible(false);
 
         initCareers();
         initProjects();
         initDesigners();
+//        initMyPortfolios();
         
     }
     
-    private void initProjects() {
+    public void initProjects() {
         this.containerCards.removeAll();
         
-        for (int i = 0; i < 9; i++) {
-            PanelCard card = new PanelCard();
-            this.containerCards.add(card);
+        List<Project> projects = ProjectsDao.getAllProjects();
+        
+        for (Project project : projects) {
+            PanelCard pC = new PanelCard(project);
+            this.containerCards.add(pC);
         }
         
         this.containerCards.revalidate();
         this.containerCards.repaint();
     }
     
-    private void initCareers() {
+    public void initCareers() {
         // Initalize available careers
         this.panelCareers.removeAll();
         for (int i = 0; i < 5; i++) {
@@ -111,18 +124,38 @@ public class HomeWindow extends javax.swing.JFrame {
         this.panelCareers.repaint();
     }
     
-    private void initDesigners() {
+    public void initDesigners() {
         
         // Initialize designers
         this.containeDesigners.removeAll();
         
-        for (int i = 0; i < 5; i++) {
-            PanelDesigner designer = new PanelDesigner();
+        List<Profile> designers = Dao.getAllProfiles();
+        
+        for (Profile profileDesigner : designers) {
+            PanelDesigner designer = new PanelDesigner(profileDesigner);
             this.containeDesigners.add(designer);
         }
         
         this.containeDesigners.revalidate();
         this.containeDesigners.repaint();
+        
+    }
+    
+    public void initMyPortfolios() {
+        
+        this.containerCardsPortfolio.removeAll();
+        
+        List<Project> projects = ProjectsDao.getProjectsByProfileId(this.profile.getIdProfile());
+        
+        for (Project project : projects) {
+            System.out.println("INIT MY PORTFOLIOS");
+            System.out.println(project);
+            PanelCard pC = new PanelCard(project);
+            this.containerCardsPortfolio.add(pC);
+        }
+        
+        this.containerCardsPortfolio.revalidate();
+        this.containerCardsPortfolio.repaint();
         
     }
     
@@ -136,12 +169,17 @@ public class HomeWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        popupProfile = new javax.swing.JPopupMenu();
+        itemEditProfile = new javax.swing.JMenuItem();
+        itemLogout = new javax.swing.JMenuItem();
         panelFram = new javax.swing.JPanel();
         panelNavbar = new javax.swing.JPanel();
         panelImage1 = new org.edisoncor.gui.panel.PanelImage();
         buttonProjects = new javax.swing.JButton();
         buttonDesigners = new javax.swing.JButton();
         buttonLogin = new javax.swing.JButton();
+        buttonMyPortfolio = new javax.swing.JButton();
+        containerSubMenu = new javax.swing.JPanel();
         scrollCareers = new javax.swing.JScrollPane();
         panelCareers = new javax.swing.JPanel();
         tabbedPainBody = new javax.swing.JTabbedPane();
@@ -150,6 +188,17 @@ public class HomeWindow extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         scrollDesigners = new javax.swing.JScrollPane();
         containeDesigners = new javax.swing.JPanel();
+        containerMyPortfolio = new javax.swing.JPanel();
+        buttonAddProjects = new javax.swing.JButton();
+        scrollMyPortfolio = new javax.swing.JScrollPane();
+        containerCardsPortfolio = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+
+        itemEditProfile.setText("Editar Perfil");
+        popupProfile.add(itemEditProfile);
+
+        itemLogout.setText("Cerrar sesion");
+        popupProfile.add(itemLogout);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -213,17 +262,37 @@ public class HomeWindow extends javax.swing.JFrame {
             }
         });
 
+        buttonMyPortfolio.setBackground(new java.awt.Color(255, 255, 255));
+        buttonMyPortfolio.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        buttonMyPortfolio.setForeground(new java.awt.Color(102, 102, 102));
+        buttonMyPortfolio.setText("Mi Portafolio");
+        buttonMyPortfolio.setBorder(new FlatButtonBorder());
+        buttonMyPortfolio.setBorderPainted(false);
+        buttonMyPortfolio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonMyPortfolio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                buttonMyPortfolioMouseClicked(evt);
+            }
+        });
+        buttonMyPortfolio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonMyPortfolioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelNavbarLayout = new javax.swing.GroupLayout(panelNavbar);
         panelNavbar.setLayout(panelNavbarLayout);
         panelNavbarLayout.setHorizontalGroup(
             panelNavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelNavbarLayout.createSequentialGroup()
                 .addComponent(panelImage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(220, 220, 220)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
                 .addComponent(buttonProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(buttonDesigners, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addComponent(buttonMyPortfolio)
+                .addGap(53, 53, 53)
                 .addComponent(buttonLogin)
                 .addGap(17, 17, 17))
         );
@@ -235,11 +304,14 @@ public class HomeWindow extends javax.swing.JFrame {
                 .addGroup(panelNavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonDesigners, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(buttonLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonMyPortfolio, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23))
         );
 
-        panelFram.add(panelNavbar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 899, -1));
+        panelFram.add(panelNavbar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 910, -1));
+
+        containerSubMenu.setBackground(new java.awt.Color(247, 247, 247));
 
         scrollCareers.setBorder(null);
         scrollCareers.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
@@ -259,7 +331,28 @@ public class HomeWindow extends javax.swing.JFrame {
 
         scrollCareers.setViewportView(panelCareers);
 
-        panelFram.add(scrollCareers, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 94, -1, -1));
+        javax.swing.GroupLayout containerSubMenuLayout = new javax.swing.GroupLayout(containerSubMenu);
+        containerSubMenu.setLayout(containerSubMenuLayout);
+        containerSubMenuLayout.setHorizontalGroup(
+            containerSubMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 910, Short.MAX_VALUE)
+            .addGroup(containerSubMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(containerSubMenuLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(scrollCareers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        containerSubMenuLayout.setVerticalGroup(
+            containerSubMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 79, Short.MAX_VALUE)
+            .addGroup(containerSubMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(containerSubMenuLayout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(scrollCareers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        panelFram.add(containerSubMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 75, 910, -1));
 
         scrollCards.setBackground(new java.awt.Color(255, 255, 255));
         scrollCards.setBorder(null);
@@ -292,7 +385,7 @@ public class HomeWindow extends javax.swing.JFrame {
             .addGroup(containerCardsLayout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(594, Short.MAX_VALUE))
+                .addContainerGap(604, Short.MAX_VALUE))
         );
         containerCardsLayout.setVerticalGroup(
             containerCardsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -317,7 +410,7 @@ public class HomeWindow extends javax.swing.JFrame {
         containeDesigners.setLayout(containeDesignersLayout);
         containeDesignersLayout.setHorizontalGroup(
             containeDesignersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 897, Short.MAX_VALUE)
+            .addGap(0, 909, Short.MAX_VALUE)
         );
         containeDesignersLayout.setVerticalGroup(
             containeDesignersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -328,13 +421,94 @@ public class HomeWindow extends javax.swing.JFrame {
 
         tabbedPainBody.addTab("DesignersTab", scrollDesigners);
 
+        containerMyPortfolio.setBackground(new java.awt.Color(247, 247, 247));
+
+        buttonAddProjects.setBackground(new java.awt.Color(0, 153, 204));
+        buttonAddProjects.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        buttonAddProjects.setForeground(new java.awt.Color(255, 255, 255));
+        buttonAddProjects.setText("Agregar projecto");
+        buttonAddProjects.setBorderPainted(false);
+        buttonAddProjects.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAddProjectsActionPerformed(evt);
+            }
+        });
+
+        scrollMyPortfolio.setBackground(new java.awt.Color(255, 255, 255));
+        scrollMyPortfolio.setBorder(null);
+        scrollMyPortfolio.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollMyPortfolio.setMaximumSize(new java.awt.Dimension(897, 32767));
+        scrollMyPortfolio.setMinimumSize(new java.awt.Dimension(897, 5));
+        scrollMyPortfolio.setPreferredSize(new java.awt.Dimension(897, 100));
+
+        containerCardsPortfolio.setBackground(new java.awt.Color(0, 0, 153));
+        containerCardsPortfolio.setMaximumSize(new java.awt.Dimension(897, 32767));
+        containerCardsPortfolio.setMinimumSize(new java.awt.Dimension(897, 110));
+
+        jPanel2.setPreferredSize(new java.awt.Dimension(300, 200));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 200, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout containerCardsPortfolioLayout = new javax.swing.GroupLayout(containerCardsPortfolio);
+        containerCardsPortfolio.setLayout(containerCardsPortfolioLayout);
+        containerCardsPortfolioLayout.setHorizontalGroup(
+            containerCardsPortfolioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerCardsPortfolioLayout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(594, Short.MAX_VALUE))
+        );
+        containerCardsPortfolioLayout.setVerticalGroup(
+            containerCardsPortfolioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerCardsPortfolioLayout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(248, 248, 248))
+        );
+
+        scrollMyPortfolio.setViewportView(containerCardsPortfolio);
+
+        javax.swing.GroupLayout containerMyPortfolioLayout = new javax.swing.GroupLayout(containerMyPortfolio);
+        containerMyPortfolio.setLayout(containerMyPortfolioLayout);
+        containerMyPortfolioLayout.setHorizontalGroup(
+            containerMyPortfolioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, containerMyPortfolioLayout.createSequentialGroup()
+                .addContainerGap(744, Short.MAX_VALUE)
+                .addComponent(buttonAddProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(containerMyPortfolioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(scrollMyPortfolio, javax.swing.GroupLayout.DEFAULT_SIZE, 909, Short.MAX_VALUE))
+        );
+        containerMyPortfolioLayout.setVerticalGroup(
+            containerMyPortfolioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(containerMyPortfolioLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(buttonAddProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(418, Short.MAX_VALUE))
+            .addGroup(containerMyPortfolioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, containerMyPortfolioLayout.createSequentialGroup()
+                    .addGap(0, 74, Short.MAX_VALUE)
+                    .addComponent(scrollMyPortfolio, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+
+        tabbedPainBody.addTab("tab4", containerMyPortfolio);
+
         panelFram.add(tabbedPainBody, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 115, -1, 510));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelFram, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelFram, javax.swing.GroupLayout.DEFAULT_SIZE, 913, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -346,18 +520,42 @@ public class HomeWindow extends javax.swing.JFrame {
 
     private void buttonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoginActionPerformed
         // TODO add your handling code here:
-        new SignInWindow(this).setVisible(true);
+        if (this.loggedUser != null) {
+            this.popupProfile.show(this.buttonLogin, 0, this.buttonLogin.getHeight());
+        } else
+            new SignInWindow(this).setVisible(true);
     }//GEN-LAST:event_buttonLoginActionPerformed
 
     private void buttonProjectsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonProjectsMouseClicked
         // TODO add your handling code here:
         this.tabbedPainBody.setSelectedIndex(0);
+        
+        initProjects();
     }//GEN-LAST:event_buttonProjectsMouseClicked
 
     private void buttonDesignersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDesignersMouseClicked
         // TODO add your handling code here:
         this.tabbedPainBody.setSelectedIndex(1);
+        
+        initDesigners();
     }//GEN-LAST:event_buttonDesignersMouseClicked
+
+    private void buttonMyPortfolioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonMyPortfolioMouseClicked
+        // TODO add your handling code here:
+        this.tabbedPainBody.setSelectedIndex(2);
+
+        initMyPortfolios();
+    }//GEN-LAST:event_buttonMyPortfolioMouseClicked
+
+    private void buttonAddProjectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddProjectsActionPerformed
+        // TODO add your handling code here:
+        
+        new AddProjectWindow(loggedUser, this).setVisible(true);
+    }//GEN-LAST:event_buttonAddProjectsActionPerformed
+
+    private void buttonMyPortfolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMyPortfolioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonMyPortfolioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -395,19 +593,29 @@ public class HomeWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonAddProjects;
     private javax.swing.JButton buttonDesigners;
     private javax.swing.JButton buttonLogin;
+    private javax.swing.JButton buttonMyPortfolio;
     private javax.swing.JButton buttonProjects;
     private javax.swing.JPanel containeDesigners;
     private javax.swing.JPanel containerCards;
+    private javax.swing.JPanel containerCardsPortfolio;
+    private javax.swing.JPanel containerMyPortfolio;
+    private javax.swing.JPanel containerSubMenu;
+    private javax.swing.JMenuItem itemEditProfile;
+    private javax.swing.JMenuItem itemLogout;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel panelCareers;
     private javax.swing.JPanel panelFram;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPanel panelNavbar;
+    private javax.swing.JPopupMenu popupProfile;
     private javax.swing.JScrollPane scrollCards;
     private javax.swing.JScrollPane scrollCareers;
     private javax.swing.JScrollPane scrollDesigners;
+    private javax.swing.JScrollPane scrollMyPortfolio;
     private javax.swing.JTabbedPane tabbedPainBody;
     // End of variables declaration//GEN-END:variables
 }

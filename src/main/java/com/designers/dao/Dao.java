@@ -9,6 +9,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,19 +18,15 @@ import com.designers.domain.Profile;
 import com.designers.domain.User;
 import com.designers.utils.PasswordUtils;
 
-/**
- *
- * @author carlo
- */
 public class Dao {
     
-    private final String JDBC_URL = "jdbc:postgresql://localhost:5432/designers";
-    private final String USERNAME = "designers_admin";
-    private final String PASSWORD = "admin";
+    private static final String JDBC_URL = "jdbc:postgresql://localhost:5432/designers";
+    private static final String USERNAME = "designers_admin";
+    private static final String PASSWORD = "admin";
     
     public Dao() {}
     
-    private Connection getConnection() {
+    public static Connection getConnection() {
         try {
             return DriverManager.getConnection(JDBC_URL,USERNAME, PASSWORD);
         } catch (SQLException ex) {
@@ -37,7 +35,7 @@ public class Dao {
         return null;
     }
     
-    public void closeConnection(Connection connection) {
+    public static void closeConnection(Connection connection) {
         try {
             if (connection != null) {
                 connection.close();
@@ -85,14 +83,28 @@ public class Dao {
         Connection connection = getConnection();
         if (connection != null) {
             try {
-                String sql = "INSERT INTO \"user\" (email, password) VALUES (?, ?)";
+                int userId = -1;
+                String sql = "INSERT INTO \"user\" (email, password) VALUES (?, ?) RETURNING idUser";
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setString(1, user.getEmail());
                 preparedStatement.setString(2, PasswordUtils.hashPassword(user.getPassword()));
-                preparedStatement.executeUpdate();
+                
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    userId = resultSet.getInt("idUser");
+                }
+                resultSet.close();
                 preparedStatement.close();
 
-                return true;
+                // If the user was created now we can create the profile
+                Profile profile = new Profile();
+                profile.setUserId(userId);
+                profile.setName(user.getEmail());
+
+                // Register the profile
+                int profileId = registerProfile(profile);
+                return profileId != -1;
             } catch (Exception e) {
                 Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al registrar el usuario", e);
             } finally {
@@ -127,6 +139,7 @@ public class Dao {
                     profile.setPhone(resultSet.getString("phone"));
                     profile.setCareerId(resultSet.getInt("careerId"));
                     profile.setUserId(resultSet.getInt("userId"));
+                    profile.setSummary(resultSet.getString("summary"));
                 }
                 resultSet.close();
                 preparedStatement.close();
@@ -138,6 +151,171 @@ public class Dao {
             }
         }
         return profile;
+    }
+
+    // Method to register a new profile
+    // Returns the ID of the new profile
+    public static int registerProfile(Profile profile) {
+        Connection connection = getConnection();
+        int profileId = -1;
+        if (connection != null) {
+            try {
+                String sql;
+                PreparedStatement preparedStatement = null;
+                if (profile.getCareerId() != 0) {
+                    sql = "INSERT INTO profile (name, lastname, phone, careerId, userId, summary) VALUES (?, ?, ?, ?, ?, ?) RETURNING idProfile";
+                    preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setString(1, profile.getName());
+                    preparedStatement.setString(2, profile.getLastname());
+                    preparedStatement.setString(3, profile.getPhone());
+                    preparedStatement.setInt(4, profile.getCareerId());
+                    preparedStatement.setInt(5, profile.getUserId());
+                    preparedStatement.setString(6, profile.getSummary());
+                } else {
+                    sql = "INSERT INTO profile (name, lastname, phone, userId, summary) VALUES (?, ?, ?, ?, ?) RETURNING idProfile";
+                    preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setString(1, profile.getName());
+                    preparedStatement.setString(2, profile.getLastname());
+                    preparedStatement.setString(3, profile.getPhone());
+                    preparedStatement.setInt(4, profile.getUserId());
+                    preparedStatement.setString(5, profile.getSummary());
+                }
+                
+                ResultSet resultSet = preparedStatement.executeQuery();
+                
+                if (resultSet.next()) {
+                    profileId = resultSet.getInt("idProfile");
+                }
+                
+                resultSet.close();
+                preparedStatement.close();
+                
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al registrar el perfil", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return profileId;
+    }
+
+    // Method to update a profile
+    public static boolean updateProfile(Profile profile) {
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "UPDATE profile SET name = ?, lastname = ?, phone = ?, careerId = ?, summary = ? WHERE idProfile = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, profile.getName());
+                preparedStatement.setString(2, profile.getLastname());
+                preparedStatement.setString(3, profile.getPhone());
+                preparedStatement.setInt(4, profile.getCareerId());
+                preparedStatement.setString(5, profile.getSummary());
+                preparedStatement.setInt(6, profile.getIdProfile());
+                
+                
+                int rowsUpdated = preparedStatement.executeUpdate();
+                
+                preparedStatement.close();
+                
+                return rowsUpdated > 0;
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al actualizar el perfil", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return false;
+    }
+
+    // Method to delete a profile
+    public static boolean deleteProfile(int profileId) {
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "DELETE FROM profile WHERE idProfile = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, profileId);
+                
+                int rowsDeleted = preparedStatement.executeUpdate();
+                
+                preparedStatement.close();
+                
+                return rowsDeleted > 0;
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al eliminar el perfil", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return false;
+    }
+
+    // Method to get a profile by ID
+    public static Profile getProfileById(int profileId) {
+        Profile profile = null;
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "SELECT * FROM profile WHERE idProfile = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, profileId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                
+                if (resultSet.next()) {
+                    profile = new Profile();
+                    profile.setIdProfile(resultSet.getInt("idProfile"));
+                    profile.setName(resultSet.getString("name"));
+                    profile.setLastname(resultSet.getString("lastname"));
+                    profile.setPhone(resultSet.getString("phone"));
+                    profile.setCareerId(resultSet.getInt("careerId"));
+                    profile.setUserId(resultSet.getInt("userId"));
+                    profile.setSummary(resultSet.getString("summary"));
+                }
+                resultSet.close();
+                preparedStatement.close();
+                
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener el perfil", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return profile;
+    }
+
+    // Method to get all profiles
+    public static List<Profile> getAllProfiles() {
+        List<Profile> profiles = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "SELECT * FROM profile";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                
+                while (resultSet.next()) {
+                    Profile profile = new Profile();
+                    profile.setIdProfile(resultSet.getInt("idProfile"));
+                    profile.setName(resultSet.getString("name"));
+                    profile.setLastname(resultSet.getString("lastname"));
+                    profile.setPhone(resultSet.getString("phone"));
+                    profile.setCareerId(resultSet.getInt("careerId"));
+                    profile.setUserId(resultSet.getInt("userId"));
+                    profile.setSummary(resultSet.getString("summary"));
+                    
+                    profiles.add(profile);
+                }
+                resultSet.close();
+                preparedStatement.close();
+                
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener todos los perfiles", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return profiles;
     }
     
 }
