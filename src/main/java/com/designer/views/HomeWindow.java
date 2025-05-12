@@ -11,6 +11,7 @@ import com.designers.domain.Project;
 import com.designers.domain.User;
 import com.designers.utils.WrapLayout;
 import com.designers.views.designer.AddProjectWindow;
+import com.designers.views.designer.ProfileWindow;
 import com.formdev.flatlaf.ui.FlatButtonBorder;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -195,6 +196,11 @@ public class HomeWindow extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
 
         itemEditProfile.setText("Editar Perfil");
+        itemEditProfile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemEditProfileActionPerformed(evt);
+            }
+        });
         popupProfile.add(itemEditProfile);
 
         itemLogout.setText("Cerrar sesion");
@@ -441,7 +447,7 @@ public class HomeWindow extends javax.swing.JFrame {
         scrollMyPortfolio.setMinimumSize(new java.awt.Dimension(897, 5));
         scrollMyPortfolio.setPreferredSize(new java.awt.Dimension(897, 100));
 
-        containerCardsPortfolio.setBackground(new java.awt.Color(0, 0, 153));
+        containerCardsPortfolio.setBackground(new java.awt.Color(247, 247, 247));
         containerCardsPortfolio.setMaximumSize(new java.awt.Dimension(897, 32767));
         containerCardsPortfolio.setMinimumSize(new java.awt.Dimension(897, 110));
 
@@ -556,6 +562,12 @@ public class HomeWindow extends javax.swing.JFrame {
     private void buttonMyPortfolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMyPortfolioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_buttonMyPortfolioActionPerformed
+
+    private void itemEditProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemEditProfileActionPerformed
+        // TODO add your handling code here:
+        
+        new ProfileWindow(this.profile).setVisible(true);
+    }//GEN-LAST:event_itemEditProfileActionPerformed
 
     /**
      * @param args the command line arguments

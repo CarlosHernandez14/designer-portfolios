@@ -4,8 +4,10 @@
  */
 package com.designer.views;
 
+import com.designers.dao.Dao;
 import com.designers.dao.ProjectsDao;
 import com.designers.domain.Image;
+import com.designers.domain.Profile;
 import com.designers.domain.Project;
 import com.designers.views.designer.ProjectWindow;
 import javax.swing.ImageIcon;
@@ -13,6 +15,8 @@ import javax.swing.ImageIcon;
 public class PanelCard extends RoundedPanel {
 
     private Project project;
+    
+    private Profile profileOwner;
     
     /**
      * Creates new form PanelCard
@@ -28,6 +32,8 @@ public class PanelCard extends RoundedPanel {
         
         this.project = project;
         
+        this.profileOwner = Dao.getProfileById(this.project.getProfileId());
+        
         initData();
     }
     
@@ -35,7 +41,7 @@ public class PanelCard extends RoundedPanel {
         
         this.labelTittle.setText(this.project.getName());
         this.textDescription.setText(this.project.getDescription());
-        
+        this.labelAuthor.setText(this.profileOwner.getName() + " " + ((this.profileOwner.getLastname() == null) ? "" : this.profileOwner.getLastname()));
         loadImage();
     }
     
