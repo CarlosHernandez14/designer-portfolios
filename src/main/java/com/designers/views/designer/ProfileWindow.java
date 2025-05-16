@@ -4,16 +4,21 @@
  */
 package com.designers.views.designer;
 
+import com.designer.views.HomeWindow;
 import com.designers.dao.CareersDao;
+import com.designers.dao.Dao;
 import com.designers.domain.Career;
 import com.designers.domain.Profile;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 public class ProfileWindow extends javax.swing.JFrame {
 
     private Profile loggedProfile;
+    
+    private HomeWindow homeWindow;
     
     /**
      * Creates new form ProfileWindow
@@ -22,11 +27,12 @@ public class ProfileWindow extends javax.swing.JFrame {
         initComponents();
     }
     
-    public ProfileWindow(Profile loggedProfile) {
+    public ProfileWindow(Profile loggedProfile, HomeWindow homeWindow) {
         initComponents();
         this.setLocationRelativeTo(null);
         this.loggedProfile = loggedProfile;
-    
+        this.homeWindow = homeWindow; 
+        
         initData();
     }
     
@@ -36,6 +42,7 @@ public class ProfileWindow extends javax.swing.JFrame {
         this.fieldName.setText(this.loggedProfile.getName());
         this.fieldLastname.setText(this.loggedProfile.getLastname());
         this.fieldPhone.setText(this.loggedProfile.getPhone());
+        this.textSummary.setText(this.loggedProfile.getSummary());
         
         // Init combo box
         List<Career> careers = CareersDao.getAllCareers();
@@ -43,7 +50,10 @@ public class ProfileWindow extends javax.swing.JFrame {
         
         for (Career career : careers) {
             this.comboCarrera.addItem(career.getName());
+            if (this.loggedProfile.getCareerId() == career.getIdCareer())
+                this.comboCarrera.setSelectedItem(career.getName());
         }
+        
         
         this.comboCarrera.revalidate();
         this.comboCarrera.repaint();
@@ -74,8 +84,13 @@ public class ProfileWindow extends javax.swing.JFrame {
         comboCarrera = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         buttonSave = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        buttonAddCareer = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        textSummary = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -124,6 +139,26 @@ public class ProfileWindow extends javax.swing.JFrame {
             }
         });
 
+        jLabel6.setText("No encuentras tu carrera?");
+
+        buttonAddCareer.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        buttonAddCareer.setForeground(new java.awt.Color(0, 102, 153));
+        buttonAddCareer.setText("Agrega una nueva");
+        buttonAddCareer.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buttonAddCareer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                buttonAddCareerMouseClicked(evt);
+            }
+        });
+
+        jLabel7.setText("Descripcion sobre ti");
+
+        textSummary.setBackground(new java.awt.Color(255, 255, 255));
+        textSummary.setColumns(20);
+        textSummary.setLineWrap(true);
+        textSummary.setRows(5);
+        jScrollPane1.setViewportView(textSummary);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -133,28 +168,33 @@ public class ProfileWindow extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
                             .addComponent(labelName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(57, 57, 57)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jSeparator4)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jSeparator2)
-                                        .addComponent(fieldName)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGap(18, 18, 18)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jSeparator3)
-                                        .addComponent(fieldLastname)
-                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addComponent(fieldPhone)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(comboCarrera, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(buttonSave, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(buttonSave, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jSeparator2)
+                                    .addComponent(fieldName)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jSeparator3)
+                                    .addComponent(fieldLastname)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(fieldPhone, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(comboCarrera, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(buttonAddCareer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -185,13 +225,21 @@ public class ProfileWindow extends javax.swing.JFrame {
                 .addComponent(fieldPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboCarrera, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(buttonAddCareer))
+                .addGap(18, 18, 18)
                 .addComponent(buttonSave, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addGap(22, 22, 22))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -211,8 +259,47 @@ public class ProfileWindow extends javax.swing.JFrame {
     private void buttonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSaveActionPerformed
         // TODO add your handling code here:
 
+        String name = this.fieldName.getText();
+        String lastname = this.fieldLastname.getText(); 
+        String phone = this.fieldPhone.getText();
+        String summary = this.textSummary.getText();
+        String careerName = this.comboCarrera.getSelectedItem().toString();
+        
+        Career career = CareersDao.getCareerByName(careerName);
+        
+        this.loggedProfile.setName(name);
+        this.loggedProfile.setLastname(lastname);
+        this.loggedProfile.setPhone(phone);
+        this.loggedProfile.setSummary(summary);
+        
+        this.loggedProfile.setCareerId(career.getIdCareer());
+        
+        if (Dao.updateProfile(loggedProfile)) {
+            JOptionPane.showMessageDialog(null, "Informacion actualizada correctamente");
+            this.dispose();
+            this.homeWindow.initUserData();
+        } else
+            JOptionPane.showMessageDialog(null, "Ocurrio un error al actualizar. Intentalo mas tarde");
         
     }//GEN-LAST:event_buttonSaveActionPerformed
+
+    private void buttonAddCareerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonAddCareerMouseClicked
+        // TODO add your handling code here:
+        
+        String careerName = JOptionPane.showInputDialog(null, "Ingresa el nombre de la carrera");
+        if (careerName == null || careerName.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "NO se ingreso un nombre de carrera valido");
+            return;
+        }
+        
+        // Creamos la carrera
+        Career newCareer = new Career(careerName);
+        if (CareersDao.saveCareer(newCareer)) {
+            JOptionPane.showMessageDialog(null, "Carrera creada con el nombre de: " + careerName);
+            this.initData();
+        } else 
+            JOptionPane.showMessageDialog(null, "Ocurrio un error al agregar la carrera. Intentalo mas tarde");
+    }//GEN-LAST:event_buttonAddCareerMouseClicked
 
     /**
      * @param args the command line arguments
@@ -250,6 +337,7 @@ public class ProfileWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel buttonAddCareer;
     private javax.swing.JButton buttonSave;
     private javax.swing.JComboBox<String> comboCarrera;
     private javax.swing.JTextField fieldLastname;
@@ -259,11 +347,15 @@ public class ProfileWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel labelName;
+    private javax.swing.JTextArea textSummary;
     // End of variables declaration//GEN-END:variables
 }

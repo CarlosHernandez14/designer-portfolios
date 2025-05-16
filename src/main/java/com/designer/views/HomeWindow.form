@@ -21,6 +21,12 @@
             <Property name="text" type="java.lang.String" value="Cerrar sesion"/>
           </Properties>
         </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="itemCv">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Mi CV"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+          </Properties>
+        </MenuItem>
       </SubComponents>
     </Container>
   </NonVisualComponents>

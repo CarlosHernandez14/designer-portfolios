@@ -4,8 +4,10 @@
  */
 package com.designer.views;
 
+import com.designers.dao.CareersDao;
 import com.designers.dao.Dao;
 import com.designers.dao.ProjectsDao;
+import com.designers.domain.Career;
 import com.designers.domain.Profile;
 import com.designers.domain.Project;
 import com.designers.domain.User;
@@ -78,7 +80,7 @@ public class HomeWindow extends javax.swing.JFrame {
         initData();
     }
     
-    private void initUserData() {
+    public void initUserData() {
         // Get the profile from the logged user
         this.profile = this.dao.getProfileByUserId(this.loggedUser.getIdUser());
         
@@ -116,9 +118,12 @@ public class HomeWindow extends javax.swing.JFrame {
     public void initCareers() {
         // Initalize available careers
         this.panelCareers.removeAll();
-        for (int i = 0; i < 5; i++) {
-            PanelCategory career = new PanelCategory();
-            this.panelCareers.add(career);
+        
+        List<Career> careers = CareersDao.getAllCareers();
+        
+        for (Career career : careers) {
+            PanelCategory pCat = new PanelCategory(career.getName());
+            this.panelCareers.add(pCat);
         }
         
         this.panelCareers.revalidate();
@@ -173,6 +178,7 @@ public class HomeWindow extends javax.swing.JFrame {
         popupProfile = new javax.swing.JPopupMenu();
         itemEditProfile = new javax.swing.JMenuItem();
         itemLogout = new javax.swing.JMenuItem();
+        itemCv = new javax.swing.JMenuItem();
         panelFram = new javax.swing.JPanel();
         panelNavbar = new javax.swing.JPanel();
         panelImage1 = new org.edisoncor.gui.panel.PanelImage();
@@ -205,6 +211,10 @@ public class HomeWindow extends javax.swing.JFrame {
 
         itemLogout.setText("Cerrar sesion");
         popupProfile.add(itemLogout);
+
+        itemCv.setText("Mi CV");
+        itemCv.setToolTipText("");
+        popupProfile.add(itemCv);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -566,7 +576,7 @@ public class HomeWindow extends javax.swing.JFrame {
     private void itemEditProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemEditProfileActionPerformed
         // TODO add your handling code here:
         
-        new ProfileWindow(this.profile).setVisible(true);
+        new ProfileWindow(this.profile, this).setVisible(true);
     }//GEN-LAST:event_itemEditProfileActionPerformed
 
     /**
@@ -615,6 +625,7 @@ public class HomeWindow extends javax.swing.JFrame {
     private javax.swing.JPanel containerCardsPortfolio;
     private javax.swing.JPanel containerMyPortfolio;
     private javax.swing.JPanel containerSubMenu;
+    private javax.swing.JMenuItem itemCv;
     private javax.swing.JMenuItem itemEditProfile;
     private javax.swing.JMenuItem itemLogout;
     private javax.swing.JPanel jPanel1;

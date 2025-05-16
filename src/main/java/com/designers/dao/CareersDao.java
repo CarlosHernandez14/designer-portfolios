@@ -30,7 +30,7 @@ public class CareersDao {
         List<Career> careers = new ArrayList<>();
 
         try {
-            String sql = "SELECT * FROM careers";
+            String sql = "SELECT * FROM career";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
@@ -55,7 +55,7 @@ public class CareersDao {
         Career career = null;
 
         try {
-            String sql = "SELECT * FROM careers WHERE idCareer = ?";
+            String sql = "SELECT * FROM career WHERE idCareer = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -79,7 +79,7 @@ public class CareersDao {
         boolean success = false;
 
         try {
-            String sql = "INSERT INTO careers (name) VALUES (?)";
+            String sql = "INSERT INTO career (name) VALUES (?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, career.getName());
             int rowsAffected = stmt.executeUpdate();
@@ -105,7 +105,7 @@ public class CareersDao {
         boolean success = false;
 
         try {
-            String sql = "UPDATE careers SET name = ? WHERE idCareer = ?";
+            String sql = "UPDATE career SET name = ? WHERE idCareer = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, career.getName());
             stmt.setInt(2, career.getIdCareer());
@@ -128,7 +128,7 @@ public class CareersDao {
         boolean success = false;
 
         try {
-            String sql = "DELETE FROM careers WHERE idCareer = ?";
+            String sql = "DELETE FROM career WHERE idCareer = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id);
             int rowsAffected = stmt.executeUpdate();
@@ -142,6 +142,29 @@ public class CareersDao {
             Dao.closeConnection(conn);
         }
         return success;
+    }
+
+    // Method to get a career by name
+    public static Career getCareerByName(String name) {
+        Connection conn = Dao.getConnection();
+        Career career = null;
+
+        try {
+            String sql = "SELECT * FROM career WHERE name = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int idCareer = rs.getInt("idCareer");
+                career = new Career(idCareer, name);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Dao.closeConnection(conn);
+        }
+        return career;
     }
 
     

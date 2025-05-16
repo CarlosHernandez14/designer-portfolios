@@ -16,6 +16,10 @@ public class Career {
         this.idCareer = idCareer;
         this.name = name;
     }
+    
+    public Career(String name) {
+        this.name = name;
+    }
 
     public int getIdCareer() {
         return idCareer;
