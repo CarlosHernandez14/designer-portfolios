@@ -9,6 +9,7 @@ import com.designers.dao.CareersDao;
 import com.designers.dao.Dao;
 import com.designers.domain.Career;
 import com.designers.domain.Profile;
+import com.designers.domain.Skill;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
@@ -19,7 +20,7 @@ public class ProfileWindow extends javax.swing.JFrame {
     private Profile loggedProfile;
     
     private HomeWindow homeWindow;
-    
+    private Skill skill;
     /**
      * Creates new form ProfileWindow
      */
@@ -54,6 +55,13 @@ public class ProfileWindow extends javax.swing.JFrame {
                 this.comboCarrera.setSelectedItem(career.getName());
         }
         
+        this.skill = Dao.getSkillsByProfileId(this.loggedProfile.getIdProfile())
+                .stream()
+                .findFirst()
+                .orElse(null);
+        
+        if (this.skill != null)
+            this.textSkills.setText(this.skill.getDescription());
         
         this.comboCarrera.revalidate();
         this.comboCarrera.repaint();
@@ -89,6 +97,9 @@ public class ProfileWindow extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         textSummary = new javax.swing.JTextArea();
+        jLabel8 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        textSkills = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -159,6 +170,14 @@ public class ProfileWindow extends javax.swing.JFrame {
         textSummary.setRows(5);
         jScrollPane1.setViewportView(textSummary);
 
+        jLabel8.setText("Aptitudes");
+
+        textSkills.setBackground(new java.awt.Color(255, 255, 255));
+        textSkills.setColumns(20);
+        textSkills.setLineWrap(true);
+        textSkills.setRows(5);
+        jScrollPane3.setViewportView(textSkills);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -194,7 +213,9 @@ public class ProfileWindow extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(buttonAddCareer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -229,7 +250,11 @@ public class ProfileWindow extends javax.swing.JFrame {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboCarrera, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -265,6 +290,8 @@ public class ProfileWindow extends javax.swing.JFrame {
         String summary = this.textSummary.getText();
         String careerName = this.comboCarrera.getSelectedItem().toString();
         
+        String skills = this.textSkills.getText();
+        
         Career career = CareersDao.getCareerByName(careerName);
         
         this.loggedProfile.setName(name);
@@ -275,6 +302,24 @@ public class ProfileWindow extends javax.swing.JFrame {
         this.loggedProfile.setCareerId(career.getIdCareer());
         
         if (Dao.updateProfile(loggedProfile)) {
+            
+            if (this.skill != null) {
+                this.skill.setDescription(skills);
+                
+                if (!Dao.updateSkill(skill)) {
+                    JOptionPane.showMessageDialog(null, "Error al actualizara las aptitudes");
+                    return;
+                }
+            } else {
+                
+                Skill newSkill = new Skill(skills, skills, this.loggedProfile.getIdProfile());
+                
+                if (!Dao.registerSkill(newSkill)) {
+                    JOptionPane.showMessageDialog(null, "Error al crear las skills");
+                    return;
+                }
+            }
+            
             JOptionPane.showMessageDialog(null, "Informacion actualizada correctamente");
             this.dispose();
             this.homeWindow.initUserData();
@@ -349,13 +394,16 @@ public class ProfileWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel labelName;
+    private javax.swing.JTextArea textSkills;
     private javax.swing.JTextArea textSummary;
     // End of variables declaration//GEN-END:variables
 }

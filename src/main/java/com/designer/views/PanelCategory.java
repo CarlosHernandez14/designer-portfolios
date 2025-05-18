@@ -11,7 +11,7 @@ package com.designer.views;
 public class PanelCategory extends javax.swing.JPanel {
 
     private String category;
-    
+    private HomeWindow homeWindow;
     /**
      * Creates new form PanelCategory
      */
@@ -19,9 +19,13 @@ public class PanelCategory extends javax.swing.JPanel {
         initComponents();
     }
     
-    public PanelCategory(String categoryName) {
+    public PanelCategory(String categoryName, HomeWindow homeWindow) {
         initComponents();
         this.category = categoryName;
+        
+        this.btnCareer.setText(category);
+        
+        this.homeWindow = homeWindow;
     }
 
     /**
@@ -33,14 +37,14 @@ public class PanelCategory extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        btnCareer = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(247, 247, 247));
 
-        jButton1.setBackground(new java.awt.Color(0, 152, 255));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Nombre Categoria");
+        btnCareer.setBackground(new java.awt.Color(0, 152, 255));
+        btnCareer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnCareer.setForeground(new java.awt.Color(255, 255, 255));
+        btnCareer.setText("Nombre Categoria");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -48,20 +52,20 @@ public class PanelCategory extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCareer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCareer, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnCareer;
     // End of variables declaration//GEN-END:variables
 }

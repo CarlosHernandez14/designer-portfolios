@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.designer.views;
+package com.designers.views.designer;
 
+import com.designer.views.*;
 import com.designers.dao.CareersDao;
 import com.designers.domain.Profile;
 import com.designers.domain.Resume;
@@ -22,18 +23,17 @@ import org.icepdf.ri.common.SwingViewBuilder;
 import org.icepdf.ri.common.views.DocumentViewController;
 import org.icepdf.ri.util.FontPropertiesManager;
 
-public class CvWindow extends javax.swing.JFrame {
+public class CvWindowPreview extends javax.swing.JFrame {
 
-    private Profile loggedProfile; 
+    private Profile profile; 
     private SwingController swingController;
     private JPanel pdfViewerPanel;
     
-    private File selectedCv;
 
     /**
      * Creates new form CvWindow
      */
-    public CvWindow() {
+    public CvWindowPreview() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.swingController = new SwingController();
@@ -60,12 +60,12 @@ public class CvWindow extends javax.swing.JFrame {
         initData();
     }
     
-    public CvWindow(Profile loggedProfile) {
+    public CvWindowPreview(Profile profile) {
         initComponents();
         this.setLocationRelativeTo(null);
         this.swingController = new SwingController();
         this.swingController.setIsEmbeddedComponent(true);
-        this.loggedProfile = loggedProfile; 
+        this.profile = profile; 
         FontPropertiesManager.getInstance().loadOrReadSystemFonts();
         
         try {
@@ -89,7 +89,9 @@ public class CvWindow extends javax.swing.JFrame {
     
     private void initData() {
         
-        List<Resume> resumes = CareersDao.getAllResumesByProfileId(this.loggedProfile.getIdProfile());
+        this.labelNameCv.setText(this.profile.getName() + " " + this.profile.getLastname());
+        
+        List<Resume> resumes = CareersDao.getAllResumesByProfileId(this.profile.getIdProfile());
         
         if (!resumes.isEmpty()) {
             
@@ -115,9 +117,7 @@ public class CvWindow extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
-        labelName = new javax.swing.JLabel();
-        buttonCV = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
+        labelNameCv = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         containerPdfPreview = new javax.swing.JPanel();
 
@@ -126,32 +126,10 @@ public class CvWindow extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        labelName.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
-        labelName.setForeground(new java.awt.Color(0, 153, 204));
-        labelName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        labelName.setText("Mi CV");
-
-        buttonCV.setBackground(new java.awt.Color(0, 153, 204));
-        buttonCV.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        buttonCV.setForeground(new java.awt.Color(255, 255, 255));
-        buttonCV.setText("Seleccionar CV");
-        buttonCV.setBorderPainted(false);
-        buttonCV.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonCVActionPerformed(evt);
-            }
-        });
-
-        btnSave.setBackground(new java.awt.Color(0, 153, 204));
-        btnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnSave.setForeground(new java.awt.Color(255, 255, 255));
-        btnSave.setText("Guardar");
-        btnSave.setBorderPainted(false);
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
-            }
-        });
+        labelNameCv.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        labelNameCv.setForeground(new java.awt.Color(0, 153, 204));
+        labelNameCv.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelNameCv.setText("Mi CV");
 
         containerPdfPreview.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -159,11 +137,11 @@ public class CvWindow extends javax.swing.JFrame {
         containerPdfPreview.setLayout(containerPdfPreviewLayout);
         containerPdfPreviewLayout.setHorizontalGroup(
             containerPdfPreviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 403, Short.MAX_VALUE)
+            .addGap(0, 429, Short.MAX_VALUE)
         );
         containerPdfPreviewLayout.setVerticalGroup(
             containerPdfPreviewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 405, Short.MAX_VALUE)
+            .addGap(0, 521, Short.MAX_VALUE)
         );
 
         jScrollPane1.setViewportView(containerPdfPreview);
@@ -175,32 +153,21 @@ public class CvWindow extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
                     .addComponent(jSeparator1)
-                    .addComponent(labelName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(labelNameCv, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(buttonCV, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(labelName)
+                .addComponent(labelNameCv)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(buttonCV, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -216,60 +183,6 @@ public class CvWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void buttonCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCVActionPerformed
-        // TODO add your handling code here:
-
-
-        JnaFileChooser fileChooser = new JnaFileChooser();
-        fileChooser.addFilter("Archivos PDF", "pdf");
-        
-        if (fileChooser.showOpenDialog(this)) {
-            String path = fileChooser.getSelectedFile().getAbsolutePath();
-            this.selectedCv = fileChooser.getSelectedFile();
-            System.out.println("Path: " + path);
-            try {
-                this.swingController.openDocument(path);
-                
-                swingController.setPageFitMode(DocumentViewController.PAGE_FIT_WINDOW_HEIGHT, true);
-            } catch (Exception e) {
-                System.out.println("Error al abrir el doc: " + e.getMessage());
-            }
-        }
-        
-        this.containerPdfPreview.revalidate();
-        this.containerPdfPreview.repaint();
-    }//GEN-LAST:event_buttonCVActionPerformed
-
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
-        
-        if (this.selectedCv != null) {
-            
-            // Guardar el CV en la carpeta cvs
-            String destinationPath = "cvs/" + this.selectedCv.getName();
-            // Crear el archivo de destino
-            File destinationFile = new File(destinationPath);
-            // Copiar el archivo seleccionado al destino
-            try {
-                Files.copy(this.selectedCv.toPath(), destinationFile.toPath());
-                Resume resume = new Resume(this.loggedProfile.getIdProfile(), destinationPath, new Date(new java.util.Date().getTime()));
-                if (CareersDao.saveResume(resume)) {
-                    JOptionPane.showMessageDialog(this, "CV guardado exitosamente en: " + destinationPath, "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                    this.dispose();
-                } else
-                    JOptionPane.showMessageDialog(null, "No se pudo guardar el CV");
-                
-            } catch (Exception e) {
-                System.out.println("Error al guardar cv: " + e.getMessage());
-                JOptionPane.showMessageDialog(this, "Error al guardar el CV: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-
-        } else {
-            JOptionPane.showMessageDialog(this, "Por favor, selecciona un CV antes de guardar.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        
-    }//GEN-LAST:event_btnSaveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -288,31 +201,30 @@ public class CvWindow extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CvWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CvWindowPreview.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CvWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CvWindowPreview.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CvWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CvWindowPreview.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CvWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CvWindowPreview.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CvWindow().setVisible(true);
+                new CvWindowPreview().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSave;
-    private javax.swing.JButton buttonCV;
     private javax.swing.JPanel containerPdfPreview;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JLabel labelName;
+    private javax.swing.JLabel labelNameCv;
     // End of variables declaration//GEN-END:variables
 }

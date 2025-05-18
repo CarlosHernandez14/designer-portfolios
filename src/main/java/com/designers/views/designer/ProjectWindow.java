@@ -6,11 +6,21 @@ package com.designers.views.designer;
 
 import com.designer.views.PanelImageRedondeado;
 import com.designer.views.RoundedPanel;
+import com.designers.dao.Dao;
+import com.designers.dao.ProjectsDao;
+import com.designers.domain.Image;
+import com.designers.domain.Profile;
 import com.designers.domain.Project;
+import com.designers.domain.User;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.ImageIcon;
+import org.edisoncor.gui.panel.PanelImage;
 
 public class ProjectWindow extends javax.swing.JFrame {
 
     private Project project;
+    private Profile author;
     
     /**
      * Creates new form ProjectWindow
@@ -32,8 +42,30 @@ public class ProjectWindow extends javax.swing.JFrame {
     
     private void initData() {
         
+        List<Image> projectImgs = ProjectsDao.getImagesByProjectId(this.project.getIdProject());
         
+        List<PanelImage> panelsImages = new ArrayList<>();
+        panelsImages.add(panelImage1);
+        panelsImages.add(panelImage2);
+        panelsImages.add(panelImage3);
+        panelsImages.add(panelImage4);
+        panelsImages.add(panelImage5);
         
+        for (int i = 0; i < projectImgs.size(); i++) {
+            
+            panelsImages.get(i).setIcon(new ImageIcon(projectImgs.get(i).getFile()));
+            
+        }
+        
+        this.textDescription.setText(this.project.getDescription());
+        
+        author = Dao.getProfileById(this.project.getProfileId());
+        this.labelAuthor.setText(author.getName() + " " + author.getLastname());
+        
+        User authorUser = Dao.getUserById(author.getUserId());
+        this.labelAuthorEmail.setText(authorUser.getEmail());
+        
+        this.labelProjectName.setText(this.project.getName());
     }
 
     /**
@@ -50,7 +82,7 @@ public class ProjectWindow extends javax.swing.JFrame {
         shadowRenderer1 = new org.edisoncor.gui.util.ShadowRenderer();
         containerFrame = new javax.swing.JPanel();
         containerBody = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        labelProjectName = new javax.swing.JLabel();
         containerImages = new javax.swing.JPanel();
         panelImage1 = new PanelImageRedondeado();
         jPanel1 = new javax.swing.JPanel();
@@ -62,9 +94,10 @@ public class ProjectWindow extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         textDescription = new javax.swing.JTextArea();
         jPanel3 = new RoundedPanel(20);
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        labelAuthor = new javax.swing.JLabel();
+        labelAuthorEmail = new javax.swing.JLabel();
+        buttonViewCV = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         shadowFactory1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -80,9 +113,9 @@ public class ProjectWindow extends javax.swing.JFrame {
         containerBody.setBackground(new java.awt.Color(255, 255, 255));
         containerBody.setPreferredSize(new java.awt.Dimension(721, 600));
 
-        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel1.setText("Nombre del projecto");
+        labelProjectName.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        labelProjectName.setForeground(new java.awt.Color(102, 102, 102));
+        labelProjectName.setText("Nombre del projecto");
 
         containerImages.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -183,6 +216,7 @@ public class ProjectWindow extends javax.swing.JFrame {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
+        textDescription.setEditable(false);
         textDescription.setBackground(new java.awt.Color(255, 255, 255));
         textDescription.setColumns(20);
         textDescription.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -194,19 +228,24 @@ public class ProjectWindow extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(242, 242, 242));
 
-        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel2.setText("Nombre del autor");
+        labelAuthor.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        labelAuthor.setForeground(new java.awt.Color(51, 51, 51));
+        labelAuthor.setText("Nombre del autor");
 
-        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(51, 51, 51));
-        jLabel3.setText("Correo de contacto");
+        labelAuthorEmail.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        labelAuthorEmail.setForeground(new java.awt.Color(51, 51, 51));
+        labelAuthorEmail.setText("Correo de contacto");
 
-        jButton1.setBackground(new java.awt.Color(0, 153, 204));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Visualizar CV");
-        jButton1.setBorderPainted(false);
+        buttonViewCV.setBackground(new java.awt.Color(0, 153, 204));
+        buttonViewCV.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        buttonViewCV.setForeground(new java.awt.Color(255, 255, 255));
+        buttonViewCV.setText("Visualizar CV");
+        buttonViewCV.setBorderPainted(false);
+        buttonViewCV.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonViewCVActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -215,22 +254,26 @@ public class ProjectWindow extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
+                    .addComponent(labelAuthor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelAuthorEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonViewCV, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(labelAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                .addComponent(labelAuthorEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(buttonViewCV, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
         );
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel4.setText("Informacion sobre el proyecto");
 
         javax.swing.GroupLayout containerBodyLayout = new javax.swing.GroupLayout(containerBody);
         containerBody.setLayout(containerBodyLayout);
@@ -239,11 +282,15 @@ public class ProjectWindow extends javax.swing.JFrame {
             .addGroup(containerBodyLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(containerBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelProjectName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(containerBodyLayout.createSequentialGroup()
                         .addGroup(containerBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(containerBodyLayout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(containerBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(containerBodyLayout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel4)))
                                 .addGap(46, 46, 46)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
@@ -254,13 +301,18 @@ public class ProjectWindow extends javax.swing.JFrame {
             containerBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(containerBodyLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(labelProjectName, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(containerImages, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
                 .addGroup(containerBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(containerBodyLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(containerBodyLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel4)
+                        .addGap(22, 22, 22)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(34, Short.MAX_VALUE))
         );
 
@@ -283,6 +335,12 @@ public class ProjectWindow extends javax.swing.JFrame {
     private void shadowFactory1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_shadowFactory1PropertyChange
         // TODO add your handling code here:
     }//GEN-LAST:event_shadowFactory1PropertyChange
+
+    private void buttonViewCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonViewCVActionPerformed
+        // TODO add your handling code here:
+        
+        new CvWindowPreview(author).setVisible(true);
+    }//GEN-LAST:event_buttonViewCVActionPerformed
 
     /**
      * @param args the command line arguments
@@ -320,17 +378,18 @@ public class ProjectWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonViewCV;
     private javax.swing.JPanel containerBody;
     private javax.swing.JPanel containerFrame;
     private javax.swing.JPanel containerImages;
     private org.edisoncor.gui.panel.PanelImage containerRestImages;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelAuthor;
+    private javax.swing.JLabel labelAuthorEmail;
+    private javax.swing.JLabel labelProjectName;
     private com.sun.animation.effects.Move move1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private org.edisoncor.gui.panel.PanelImage panelImage2;

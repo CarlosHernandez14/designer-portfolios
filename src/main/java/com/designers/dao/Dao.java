@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.designers.domain.Profile;
+import com.designers.domain.Skill;
 import com.designers.domain.User;
 import com.designers.utils.PasswordUtils;
 
@@ -112,6 +113,35 @@ public class Dao {
             }
         }
         return false;
+    }
+
+    // Get user by ID
+    public static User getUserById(int userId) {
+        User user = null;
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "SELECT * FROM \"user\" WHERE idUser = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                
+                if (resultSet.next()) {
+                    user = new User();
+                    user.setIdUser(resultSet.getInt("idUser"));
+                    user.setEmail(resultSet.getString("email"));
+                    user.setPassword(resultSet.getString("password"));
+                }
+                resultSet.close();
+                preparedStatement.close();
+                
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener el usuario", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return user;
     }
 
 
@@ -317,5 +347,177 @@ public class Dao {
         }
         return profiles;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// METHODS FOR SKILLS
+    
+    // Method to get the skills by profileId
+    public static List<Skill> getSkillsByProfileId(int profileId) {
+        List<Skill> skills = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "SELECT * FROM skill WHERE profileId = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, profileId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                
+                while (resultSet.next()) {
+                    Skill skill = new Skill();
+                    skill.setIdSkill(resultSet.getInt("idSkill"));
+                    skill.setName(resultSet.getString("name"));
+                    skill.setDescription(resultSet.getString("description"));
+                    skill.setProfileId(resultSet.getInt("profileId"));
+                    
+                    skills.add(skill);
+                }
+                resultSet.close();
+                preparedStatement.close();
+                
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener las habilidades", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return skills;
+    }
+
+    // Method to register a new skill
+    public static boolean registerSkill(Skill skill) {
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "INSERT INTO skill (name, description, profileId) VALUES (?, ?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, skill.getName());
+                preparedStatement.setString(2, skill.getDescription());
+                preparedStatement.setInt(3, skill.getProfileId());
+                
+                int rowsInserted = preparedStatement.executeUpdate();
+                
+                preparedStatement.close();
+                
+                return rowsInserted > 0;
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al registrar la habilidad", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return false;
+    }
+
+    // Method to update a skill
+    public static boolean updateSkill(Skill skill) {
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "UPDATE skill SET name = ?, description = ? WHERE idSkill = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, skill.getName());
+                preparedStatement.setString(2, skill.getDescription());
+                preparedStatement.setInt(3, skill.getIdSkill());
+                
+                int rowsUpdated = preparedStatement.executeUpdate();
+                
+                preparedStatement.close();
+                
+                return rowsUpdated > 0;
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al actualizar la habilidad", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return false;
+    }
+
+    // Method to delete a skill
+    public static boolean deleteSkill(int skillId) {
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "DELETE FROM skill WHERE idSkill = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, skillId);
+                
+                int rowsDeleted = preparedStatement.executeUpdate();
+                
+                preparedStatement.close();
+                
+                return rowsDeleted > 0;
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al eliminar la habilidad", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return false;
+    }
+
+    // Method to get a skill by ID
+    public static Skill getSkillById(int skillId) {
+        Skill skill = null;
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "SELECT * FROM skill WHERE idSkill = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, skillId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                
+                if (resultSet.next()) {
+                    skill = new Skill();
+                    skill.setIdSkill(resultSet.getInt("idSkill"));
+                    skill.setName(resultSet.getString("name"));
+                    skill.setDescription(resultSet.getString("description"));
+                    skill.setProfileId(resultSet.getInt("profileId"));
+                }
+                resultSet.close();
+                preparedStatement.close();
+                
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener la habilidad", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return skill;
+    }
+
+    // Method to get all skills
+    public static List<Skill> getAllSkills() {
+        List<Skill> skills = new ArrayList<>();
+        Connection connection = getConnection();
+        if (connection != null) {
+            try {
+                String sql = "SELECT * FROM skill";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                
+                while (resultSet.next()) {
+                    Skill skill = new Skill();
+                    skill.setIdSkill(resultSet.getInt("idSkill"));
+                    skill.setName(resultSet.getString("name"));
+                    skill.setDescription(resultSet.getString("description"));
+                    skill.setProfileId(resultSet.getInt("profileId"));
+                    
+                    skills.add(skill);
+                }
+                resultSet.close();
+                preparedStatement.close();
+                
+            } catch (Exception e) {
+                Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, "Ocurrio un error al obtener todas las habilidades", e);
+            } finally {
+                closeConnection(connection);
+            }
+        }
+        return skills;
+    }
+
+
+
     
 }

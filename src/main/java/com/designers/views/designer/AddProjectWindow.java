@@ -277,6 +277,7 @@ public class AddProjectWindow extends javax.swing.JFrame {
                 if (ProjectsDao.saveImages(images)) {
                     JOptionPane.showMessageDialog(null, "Proyecto creado con exito");
                     this.homeWindow.initMyPortfolios();
+                    this.dispose();
                 } else 
                     JOptionPane.showMessageDialog(null, "Ocurrio un error al guardar las imagenes");
                 

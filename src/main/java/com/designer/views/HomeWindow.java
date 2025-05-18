@@ -10,6 +10,7 @@ import com.designers.dao.ProjectsDao;
 import com.designers.domain.Career;
 import com.designers.domain.Profile;
 import com.designers.domain.Project;
+import com.designers.domain.Skill;
 import com.designers.domain.User;
 import com.designers.utils.WrapLayout;
 import com.designers.views.designer.AddProjectWindow;
@@ -17,7 +18,10 @@ import com.designers.views.designer.ProfileWindow;
 import com.formdev.flatlaf.ui.FlatButtonBorder;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -29,6 +33,8 @@ public class HomeWindow extends javax.swing.JFrame {
     private User loggedUser;
     private Profile profile;
     private Dao dao;
+    
+    private List<Profile> designers;
     
     /**
      * Creates new form HomeWindow
@@ -49,10 +55,12 @@ public class HomeWindow extends javax.swing.JFrame {
         this.panelCareers.setLayout(new FlowLayout());
         
 
-        
-        
+        this.fieldSearch.setVisible(false);
+        this.buttonSearch.setVisible(false);
         
         initData();
+        
+        
     }
     
     public HomeWindow(User loggedUser) {
@@ -74,10 +82,14 @@ public class HomeWindow extends javax.swing.JFrame {
         
         this.loggedUser = loggedUser;
         
+        this.fieldSearch.setVisible(false);
+        this.buttonSearch.setVisible(false);
         // Init user data
         initUserData();
         
         initData();
+        
+        
     }
     
     public void initUserData() {
@@ -122,7 +134,7 @@ public class HomeWindow extends javax.swing.JFrame {
         List<Career> careers = CareersDao.getAllCareers();
         
         for (Career career : careers) {
-            PanelCategory pCat = new PanelCategory(career.getName());
+            PanelCategory pCat = new PanelCategory(career.getName(), this);
             this.panelCareers.add(pCat);
         }
         
@@ -135,7 +147,7 @@ public class HomeWindow extends javax.swing.JFrame {
         // Initialize designers
         this.containeDesigners.removeAll();
         
-        List<Profile> designers = Dao.getAllProfiles();
+        this.designers = Dao.getAllProfiles();
         
         for (Profile profileDesigner : designers) {
             PanelDesigner designer = new PanelDesigner(profileDesigner);
@@ -186,6 +198,8 @@ public class HomeWindow extends javax.swing.JFrame {
         buttonDesigners = new javax.swing.JButton();
         buttonLogin = new javax.swing.JButton();
         buttonMyPortfolio = new javax.swing.JButton();
+        fieldSearch = new javax.swing.JTextField();
+        buttonSearch = new javax.swing.JButton();
         containerSubMenu = new javax.swing.JPanel();
         scrollCareers = new javax.swing.JScrollPane();
         panelCareers = new javax.swing.JPanel();
@@ -210,10 +224,20 @@ public class HomeWindow extends javax.swing.JFrame {
         popupProfile.add(itemEditProfile);
 
         itemLogout.setText("Cerrar sesion");
+        itemLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemLogoutActionPerformed(evt);
+            }
+        });
         popupProfile.add(itemLogout);
 
         itemCv.setText("Mi CV");
         itemCv.setToolTipText("");
+        itemCv.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemCvActionPerformed(evt);
+            }
+        });
         popupProfile.add(itemCv);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -247,6 +271,11 @@ public class HomeWindow extends javax.swing.JFrame {
         buttonProjects.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buttonProjectsMouseClicked(evt);
+            }
+        });
+        buttonProjects.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonProjectsActionPerformed(evt);
             }
         });
 
@@ -296,21 +325,45 @@ public class HomeWindow extends javax.swing.JFrame {
             }
         });
 
+        fieldSearch.setBackground(new java.awt.Color(255, 255, 255));
+        fieldSearch.setForeground(new java.awt.Color(102, 102, 102));
+        fieldSearch.setText("Buscar aptitud..");
+        fieldSearch.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                fieldSearchInputMethodTextChanged(evt);
+            }
+        });
+
+        buttonSearch.setBackground(new java.awt.Color(255, 255, 255));
+        buttonSearch.setForeground(new java.awt.Color(102, 102, 102));
+        buttonSearch.setText("Buscar");
+        buttonSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSearchActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelNavbarLayout = new javax.swing.GroupLayout(panelNavbar);
         panelNavbar.setLayout(panelNavbarLayout);
         panelNavbarLayout.setHorizontalGroup(
             panelNavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelNavbarLayout.createSequentialGroup()
                 .addComponent(panelImage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(fieldSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonSearch)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(buttonDesigners, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
+                .addGap(18, 18, 18)
                 .addComponent(buttonMyPortfolio)
-                .addGap(53, 53, 53)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(buttonLogin)
-                .addGap(17, 17, 17))
+                .addContainerGap())
         );
         panelNavbarLayout.setVerticalGroup(
             panelNavbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,7 +374,9 @@ public class HomeWindow extends javax.swing.JFrame {
                     .addComponent(buttonProjects, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonDesigners, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(buttonMyPortfolio, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(buttonMyPortfolio, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonSearch))
                 .addGap(23, 23, 23))
         );
 
@@ -545,21 +600,24 @@ public class HomeWindow extends javax.swing.JFrame {
     private void buttonProjectsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonProjectsMouseClicked
         // TODO add your handling code here:
         this.tabbedPainBody.setSelectedIndex(0);
-        
+        this.fieldSearch.setVisible(false);
+        this.buttonSearch.setVisible(false);
         initProjects();
     }//GEN-LAST:event_buttonProjectsMouseClicked
 
     private void buttonDesignersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDesignersMouseClicked
         // TODO add your handling code here:
         this.tabbedPainBody.setSelectedIndex(1);
-        
+        this.fieldSearch.setVisible(true);
+        this.buttonSearch.setVisible(true);
         initDesigners();
     }//GEN-LAST:event_buttonDesignersMouseClicked
 
     private void buttonMyPortfolioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonMyPortfolioMouseClicked
         // TODO add your handling code here:
         this.tabbedPainBody.setSelectedIndex(2);
-
+        this.fieldSearch.setVisible(false);
+        this.buttonSearch.setVisible(false);
         initMyPortfolios();
     }//GEN-LAST:event_buttonMyPortfolioMouseClicked
 
@@ -578,6 +636,54 @@ public class HomeWindow extends javax.swing.JFrame {
         
         new ProfileWindow(this.profile, this).setVisible(true);
     }//GEN-LAST:event_itemEditProfileActionPerformed
+
+    private void itemCvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemCvActionPerformed
+        // TODO add your handling code here:
+        new CvWindow(this.profile).setVisible(true);
+    }//GEN-LAST:event_itemCvActionPerformed
+
+    private void itemLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemLogoutActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        new HomeWindow().setVisible(true);
+    }//GEN-LAST:event_itemLogoutActionPerformed
+
+    private void buttonProjectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonProjectsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonProjectsActionPerformed
+
+    private void fieldSearchInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_fieldSearchInputMethodTextChanged
+        // TODO add your handling code here:
+        System.out.println("INPUT TEXT CHANGED");
+        List<Profile> designersFiltered = new ArrayList<>();
+        
+        for (Profile designer : this.designers) {
+            Skill skills = Dao.getSkillsByProfileId(designer.getIdProfile())
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
+            if (skills != null && skills.getDescription().contains(this.fieldSearch.getText()))
+                designersFiltered.add(designer);
+        }
+        
+        this.containeDesigners.removeAll();
+        
+        for (Profile profileDesigner : designersFiltered) {
+            PanelDesigner designer = new PanelDesigner(profileDesigner);
+            this.containeDesigners.add(designer);
+        }
+        
+        this.containeDesigners.revalidate();
+        this.containeDesigners.repaint();
+        
+    }//GEN-LAST:event_fieldSearchInputMethodTextChanged
+
+    private void buttonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSearchActionPerformed
+        // TODO add your handling code here:
+        
+        this.fieldSearchInputMethodTextChanged(null);
+        
+    }//GEN-LAST:event_buttonSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -620,11 +726,13 @@ public class HomeWindow extends javax.swing.JFrame {
     private javax.swing.JButton buttonLogin;
     private javax.swing.JButton buttonMyPortfolio;
     private javax.swing.JButton buttonProjects;
+    private javax.swing.JButton buttonSearch;
     private javax.swing.JPanel containeDesigners;
     private javax.swing.JPanel containerCards;
     private javax.swing.JPanel containerCardsPortfolio;
     private javax.swing.JPanel containerMyPortfolio;
     private javax.swing.JPanel containerSubMenu;
+    private javax.swing.JTextField fieldSearch;
     private javax.swing.JMenuItem itemCv;
     private javax.swing.JMenuItem itemEditProfile;
     private javax.swing.JMenuItem itemLogout;

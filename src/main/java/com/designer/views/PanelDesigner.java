@@ -9,11 +9,19 @@ import com.designers.dao.ProjectsDao;
 import com.designers.domain.Image;
 import com.designers.domain.Profile;
 import com.designers.domain.Project;
+import com.designers.utils.PdfUtils;
+import com.designers.views.designer.ProfileProjectsWindow;
 import java.awt.Point;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JViewport;
 import javax.swing.Timer;
+import jnafilechooser.api.JnaFileChooser;
 
 public class PanelDesigner extends RoundedPanel {
     
@@ -101,6 +109,7 @@ public class PanelDesigner extends RoundedPanel {
         scrollCarousel = new javax.swing.JScrollPane();
         panelCarousel = new RoundedPanel(20);
         panelImage1 = new PanelImageRedondeado();
+        btnExportPortfolio = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -131,6 +140,7 @@ public class PanelDesigner extends RoundedPanel {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
+        textDescription.setEditable(false);
         textDescription.setBackground(new java.awt.Color(255, 255, 255));
         textDescription.setColumns(20);
         textDescription.setLineWrap(true);
@@ -230,17 +240,33 @@ public class PanelDesigner extends RoundedPanel {
 
         containerCarousel.add(scrollCarousel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, -1));
 
+        btnExportPortfolio.setBackground(new java.awt.Color(0, 153, 204));
+        btnExportPortfolio.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnExportPortfolio.setForeground(new java.awt.Color(255, 255, 255));
+        btnExportPortfolio.setText("Exportar portafolio");
+        btnExportPortfolio.setBorderPainted(false);
+        btnExportPortfolio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportPortfolioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout containerPanelLayout = new javax.swing.GroupLayout(containerPanel);
         containerPanel.setLayout(containerPanelLayout);
         containerPanelLayout.setHorizontalGroup(
             containerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(containerPanelLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
                 .addGroup(containerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buttonViewProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(containerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(labelTittle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)))
+                    .addGroup(containerPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(containerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(labelTittle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)))
+                    .addGroup(containerPanelLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(buttonViewProfile)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnExportPortfolio, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(containerCarousel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -253,7 +279,9 @@ public class PanelDesigner extends RoundedPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(buttonViewProfile)
+                .addGroup(containerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(buttonViewProfile)
+                    .addComponent(btnExportPortfolio))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
@@ -276,7 +304,7 @@ public class PanelDesigner extends RoundedPanel {
 
     private void buttonViewProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonViewProfileActionPerformed
         // TODO add your handling code here:
-        
+        new ProfileProjectsWindow(profile).setVisible(true);
     }//GEN-LAST:event_buttonViewProfileActionPerformed
 
     private void scrollCarouselMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollCarouselMouseEntered
@@ -407,8 +435,31 @@ public class PanelDesigner extends RoundedPanel {
         
     }//GEN-LAST:event_buttonPrevActionPerformed
 
+    private void btnExportPortfolioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportPortfolioActionPerformed
+        
+        try {
+
+            JnaFileChooser fileChooser = new JnaFileChooser();
+            fileChooser.addFilter("Archivos PDF", "pdf");
+            if (fileChooser.showOpenDialog(null)) {
+
+                File selectedFile = fileChooser.getSelectedFile();
+                
+                
+                PdfUtils.exportPortfolio(profile, profileProjects, selectedFile);
+                
+                JOptionPane.showMessageDialog(null, "Portafolio exportado correctamente");
+            }
+            
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Ocurrio un error al exportar el portafolio");
+            System.out.println("Error al exportar portafolio: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnExportPortfolioActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnExportPortfolio;
     private javax.swing.JButton buttonNext;
     private javax.swing.JButton buttonPrev;
     private javax.swing.JButton buttonViewProfile;

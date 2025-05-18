@@ -97,6 +97,7 @@ public class PanelCard extends RoundedPanel {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
+        textDescription.setEditable(false);
         textDescription.setBackground(new java.awt.Color(255, 255, 255));
         textDescription.setColumns(20);
         textDescription.setLineWrap(true);
@@ -139,7 +140,7 @@ public class PanelCard extends RoundedPanel {
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         // TODO add your handling code here:
-        new ProjectWindow().setVisible(true);
+        new ProjectWindow(this.project).setVisible(true);
     }//GEN-LAST:event_formMouseClicked
 
 
